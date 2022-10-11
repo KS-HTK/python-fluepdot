@@ -37,6 +37,7 @@ height: int=16
 fonts: Optional[List[str]] = None
 
 def set_url(url: str):
+  global baseURL
   baseURL = url
 
 def post_time() -> None:
@@ -77,6 +78,9 @@ def get_mode() -> Mode:
 def post_text(text: str, x: int = 0, y: int = 0, font: str = "DejaVuSans12") -> Response:
   return _post(textURL, get={"x": x, "y": y, "font": font}, post=text)
   
+def post_frame_raw(frame: str) -> Response:
+  return _post(frameURL, post=data)
+
 def post_frame(frame: List[List[bool]]) -> Response:
   data: List(List(str)) = [[" "]*width for _ in range(height)]
   for x, l in frame:

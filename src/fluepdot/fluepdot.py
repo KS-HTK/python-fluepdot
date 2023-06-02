@@ -165,5 +165,4 @@ class Fluepdot:
 
 
 if __name__ == "__main__":
-    fd = Fluepdot("http://module.local")
-    fd.post_text("Hello World!")
+    pass

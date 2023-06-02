@@ -3,13 +3,12 @@
 This is a small collection of functions for interacting with a
 [fluepdot](https://fluepdot.readthedocs.io/en/latest/) module.
 
-the first call after importing should always be to set the URL at
-which the module can be reached.
+import Fluepdot class and create an instance with link as the first arg
 
 ```python
-import fluepdot as fd
+from fluepdot import Fluepdot
 
-fd.set_url("module.local")
+fd = Fluepdot("http://module.local")
 ```
 
 ## Functions
@@ -17,6 +16,7 @@ fd.set_url("module.local")
 
 function | args | default values | return type | description
 ---|---|---|---|---
+_init_ | baseURL: str, width: int, height: int | x=115, y=16 | fluepdot.Fluepdot | Constructor for Fluepdot class
 post_time ||| None | indefinitly sets the module to display the current time.
 get_size ||| (int, int) | returns the size of the connected display
 get_frame ||| str | returns the current frame stored by the module

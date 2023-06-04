@@ -65,10 +65,10 @@ class Fluepdot:
         return r.text.split('\n')
 
 
-    def get_pixel(self, x: int = 0, y: int = 0) -> bool:
-        r = _get(pixelURL, get={x, y})
-        print(r)
-        return False
+def get_pixel(x: int = 0, y: int = 0) -> bool:
+    r = _get(pixelURL, get={"x": x, "y": y})
+    rtn = True if r.text == "X" else False if r.text == " " else None
+    return rtn
 
 
     def get_fonts(self) -> None:
@@ -102,12 +102,12 @@ class Fluepdot:
         return _post(frameURL, post=data)
 
 
-    def set_pixel(self, x: int = 0, y: int = 0) -> Response:
-        return _post(pixelURL, get={x, y})
+def set_pixel(x: int = 0, y: int = 0) -> Response:
+    return _post(pixelURL, get={"x": x, "y": y})
 
 
-    def unset_pixel(self, x: int = 0, y: int = 0) -> Response:
-        return _delete(pixelURL, get={x, y})
+def unset_pixel(x: int = 0, y: int = 0) -> Response:
+    return _delete(pixelURL, get={"x": x, "y": y})
 
 
     def set_mode(self, mode: Mode = Mode.FULL) -> Response:

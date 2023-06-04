@@ -2,7 +2,6 @@
 from fluepdot import Mode
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
-import socket
 import logging
 from threading import Thread
 import re

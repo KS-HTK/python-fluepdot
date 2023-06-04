@@ -68,9 +68,9 @@ def get_frame() -> List[str]:
 
 
 def get_pixel(x: int = 0, y: int = 0) -> bool:
-    r = _get(pixelURL, get={x, y})
-    print(r)
-    return False
+    r = _get(pixelURL, get={"x": x, "y": y})
+    rtn = True if r.text == "X" else False if r.text == " " else None
+    return rtn
 
 
 def get_fonts() -> None:
@@ -105,11 +105,11 @@ def post_frame(frame: List[List[bool]]) -> Response:
 
 
 def set_pixel(x: int = 0, y: int = 0) -> Response:
-    return _post(pixelURL, get={x, y})
+    return _post(pixelURL, get={"x": x, "y": y})
 
 
 def unset_pixel(x: int = 0, y: int = 0) -> Response:
-    return _delete(pixelURL, get={x, y})
+    return _delete(pixelURL, get={"x": x, "y": y})
 
 
 def set_mode(mode: Mode = Mode.FULL) -> Response:

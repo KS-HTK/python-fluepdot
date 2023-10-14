@@ -122,15 +122,18 @@ class Fluepdot:
                 sleep(sleep_time)
 
     def post_frame(self, frame: List[List[bool]]) -> Response:
-        data: List[List[str]] = [[" "] * width for _ in range(height)]
-        for x, l in frame:
-            for y, b in l:
+        data: List[List[str]] = [[" "] * self.width for _ in range(self.height)]
+        for x, l in enumerate(frame):
+            for y, b in enumerate(l):
                 if b:
                     try:
-                        data[x, y] = "X"
+                        data[x][y] = "X"
                     except IndexError as e:
                         print(e)
-        return self._post(frameURL, post=data)
+        outStr = ""
+        for line in data:
+            outStr = outStr + "".join(line) + "\n"
+        return self._post(frameURL, post=outStr)
 
 
     def set_pixel(self, x: int = 0, y: int = 0) -> Response:

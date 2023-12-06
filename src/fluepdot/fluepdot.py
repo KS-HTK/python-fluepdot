@@ -35,6 +35,7 @@ textURL: str = "/framebuffer/text"
 fontURL: str = "/fonts"
 modeURL: str = "/rendering/mode"
 
+
 class Fluepdot:
     def __init__(self, baseURL: str, width: int = 115, height: int = 16):
         self.baseURL = baseURL
@@ -146,23 +147,31 @@ class Fluepdot:
     def set_mode(self, mode: Mode = Mode.FULL) -> Response:
         return self._put(modeURL, post=str(mode.value))
 
-    def _delete(self, endpoint: str, get: GetParam = {}, post: PostParam = '') -> Response:
-        if self.baseURL == None:
+    def _delete(self, endpoint: str, get: GetParam | None = None) -> Response:
+        if get is None:
+            get = {}
+        if self.baseURL is None:
             raise RuntimeError('baseURL is None, call set_url')
         return requests.delete(url=self.baseURL + endpoint, params=get)
 
-    def _post(self,  endpoint: str, get: GetParam = {}, post: PostParam = '') -> Response:
-        if self.baseURL == None:
+    def _post(self, endpoint: str, get: GetParam | None = None, post: PostParam = '') -> Response:
+        if get is None:
+            get = {}
+        if self.baseURL is None:
             raise RuntimeError('baseURL is None, call set_url')
         return requests.post(url=self.baseURL + endpoint, params=get, data=post)
 
-    def _put(self, endpoint: str, get: GetParam = {}, post: PostParam = '') -> Response:
-        if self.baseURL == None:
+    def _put(self, endpoint: str, get: GetParam | None = None, post: PostParam = '') -> Response:
+        if get is None:
+            get = {}
+        if self.baseURL is None:
             raise RuntimeError('baseURL is None, call set_url')
         return requests.put(url=self.baseURL + endpoint, params=get, data=post)
 
-    def _get(self, endpoint: str, get: GetParam = {}) -> Response:
-        if self.baseURL == None:
+    def _get(self, endpoint: str, get: GetParam | None = None) -> Response:
+        if get is None:
+            get = {}
+        if self.baseURL is None:
             raise RuntimeError('baseURL is None, call set_url')
         return requests.get(url=self.baseURL + endpoint, params=get)
 

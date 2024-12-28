@@ -34,11 +34,12 @@ modeURL: str = "/rendering/mode"
 
 
 class Fluepdot:
-    def __init__(self, baseURL: str, width: int = 115, height: int = 16):
+    def __init__(self, baseURL: str, width: int = 115, height: int = 16, flipped: bool = False):
         self.baseURL = baseURL
         self.width = width
         self.height = height
         self.fonts: Optional[List[str]] = None
+        self.flipped: bool = flipped
 
     def set_url(self, url: str):
         self.baseURL = url
@@ -60,9 +61,14 @@ class Fluepdot:
 
     def get_frame(self) -> List[str]:
         r = self._get(frameURL)
-        return r.text.split('\n')
+        if self.flipped:
+            return r.text[-2::-1].split('\n')
+        return r.text.split('\n')[:-1]
 
     def get_pixel(self, x: int = 0, y: int = 0) -> bool | None:
+        if self.flipped:
+            y = self.height - 1 - y
+            x = self.width - 1 - x
         r = self._get(pixelURL, get={"x": x, "y": y})
         rtn = True if r.text == "X" else False if r.text == " " else None
         return rtn
@@ -77,6 +83,9 @@ class Fluepdot:
         return Mode(int(r.text))
 
     def post_text(self, text: str, x: int = 0, y: int = 0, font: str = "DejaVuSans12") -> Response:
+        if self.flipped:
+            self._post(textURL, get={"x": x, "y": y, "font": font}, post=text)
+            return self.post_frame_raw(frame="\n".join(self.get_frame())+"\n")
         return self._post(textURL, get={"x": x, "y": y, "font": font}, post=text)
 
     def post_frame_raw(self, frame: str) -> Response:
@@ -139,10 +148,18 @@ class Fluepdot:
 
 
     def set_pixel(self, x: int = 0, y: int = 0) -> Response:
+        y = self.height - 1 - y
+        if self.flipped:
+            x = self.width - 1 - x
+            y = self.height - 1 - y
         return self._post(pixelURL, get={"x": x, "y": y})
 
 
     def unset_pixel(self, x: int = 0, y: int = 0) -> Response:
+        y = self.height - 1 - y
+        if self.flipped:
+            y = self.height - 1 - y
+            x = self.width - 1 - x
         return self._delete(pixelURL, get={"x": x, "y": y})
 
     def set_mode(self, mode: Mode = Mode.FULL) -> Response:

@@ -1,11 +1,3 @@
-# python fluepdot module
-
-import requests
-import binascii
-from requests import Response
-from enum import Enum
-from typing import Any, Dict, Optional, List
-
 """
   Small library to interact with a fluepdot controlled display
   https://fluepdot.readthedocs.io/en/latest/
@@ -14,6 +6,11 @@ from typing import Any, Dict, Optional, List
 
   Currently there is no support for changing the timings.
 """
+
+import requests
+from requests import Response
+from enum import Enum
+from typing import Any, Dict, Optional, List
 
 GetParam = Dict[str, Any]
 PostParam = str
@@ -51,17 +48,17 @@ class Fluepdot:
                 dt = ndt
                 self.post_text(dt, x=8, y=1, font="fixed_7x14")
 
-    def get_size(self) -> (int, int):
+    def get_size(self) -> tuple[int, int]:
         frame = self.get_frame()
         self.width = len(frame[0])
         self.height = len(frame) - 1
-        return [self.width, self.height]
+        return self.width, self.height
 
     def get_frame(self) -> List[str]:
         r = self._get(frameURL)
         return r.text.split('\n')
 
-    def get_pixel(self, x: int = 0, y: int = 0) -> bool:
+    def get_pixel(self, x: int = 0, y: int = 0) -> bool | None:
         r = self._get(pixelURL, get={"x": x, "y": y})
         rtn = True if r.text == "X" else False if r.text == " " else None
         return rtn
@@ -81,13 +78,18 @@ class Fluepdot:
     def post_frame_raw(self, frame: str) -> Response:
         return self._post(frameURL, post=frame)
 
-    def post_frame(self, frame: List[List[bool]]) -> Response:
+    def post_frame(self, frame: List[List[bool]], center: bool = False) -> Response:
         data: List[List[str]] = [[" "] * self.width for _ in range(self.height)]
-        for x, l in enumerate(frame):
-            for y, b in enumerate(l):
+        x_offset: int = 0
+        y_offset: int = 0
+        if center:
+            x_offset = (self.width - max(len(line) for line in frame)) // 2
+            y_offset = (self.height - len(frame))//2
+        for y, l in enumerate(frame):
+            for x, b in enumerate(l):
                 if b:
                     try:
-                        data[x][y] = "X"
+                        data[y+y_offset][x+x_offset] = "X"
                     except IndexError as e:
                         print(e)
         outStr = ""

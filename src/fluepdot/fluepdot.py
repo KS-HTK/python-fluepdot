@@ -70,7 +70,7 @@ class Fluepdot:
 
     def get_mode(self) -> Mode:
         r = self._get(modeURL)
-        return Mode(r.text)
+        return Mode(int(r.text))
 
     def post_text(self, text: str, x: int = 0, y: int = 0, font: str = "DejaVuSans12") -> Response:
         return self._post(textURL, get={"x": x, "y": y, "font": font}, post=text)

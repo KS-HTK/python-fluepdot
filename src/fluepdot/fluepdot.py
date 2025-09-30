@@ -40,6 +40,10 @@ class Fluepdot:
     def set_url(self, url: str):
         self.baseURL = url
 
+    def clear(self, inverted: bool = False) -> None:
+        self.post_frame([[inverted]*115]*16)
+
+
     def post_time(self) -> None:
         import datetime
         dt: str = ""
@@ -69,14 +73,14 @@ class Fluepdot:
         rtn = True if r.text == "X" else False if r.text == " " else None
         return rtn
 
-    def get_fonts(self) -> None:
+    def get_fonts(self) -> list[str]:
         r = self._get(fontURL)
-        fonts = r.text.split("\n")
-        print(fonts)
+        return r.text.split("\n")
 
     def get_mode(self) -> Mode:
         r = self._get(modeURL)
-        return Mode(int(r.text))
+        text = r.text.split("\n")[0]
+        return Mode(int(text))
 
     def post_text(self, text: str, x: int = 0, y: int = 0, font: str = "DejaVuSans12") -> Response:
         if self.flipped:

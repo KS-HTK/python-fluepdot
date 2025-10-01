@@ -2,7 +2,10 @@
   Small library to interact with a fluepdot controlled display
   https://fluepdot.readthedocs.io/en/latest/
 
-  it should only be required to change the baseURL
+  Usage:
+    from fluepdot import Fluepdot
+    fd = Fluepdot("http://module.local")
+    fd.post_text("Hello World!")
 
   Currently there is no support for changing the timings.
 """
@@ -11,6 +14,7 @@ import requests
 from requests import Response
 from enum import Enum
 from typing import Any, Dict, Optional, List
+from time import sleep
 
 GetParam = Dict[str, Any]
 PostParam = str
@@ -90,6 +94,42 @@ class Fluepdot:
 
     def post_frame_raw(self, frame: str) -> Response:
         return self._post(frameURL, post=frame)
+
+    def post_scroll_frame_raw(self, frame: str, loop:bool or int=False, sleep_time:int=1) -> None:
+        """
+        Parameters
+        ----------
+        frame : str
+            A " " and "X" encoded framestring exactly the length of and 16 lines high
+        loop : bool or int, optional
+            if int it will loop the frame with the given number of seperation spaces
+            if bool:
+                True: same as with loop=115
+                False: will scroll the frame from right to left starting at blank and scrolling till blank
+        sleep_time : int, optional
+            The number of seconds to wait between steps, by default 1
+            will be limited by the timing interval of the display
+        """
+        def _extend_frame(line: str) -> str:
+            return line+(" "*loop)+line[0:115]
+        def _pad_frame(line: str) -> str:
+            pad = " "*115
+            return pad+line+pad
+
+        frame = frame.split("\n")
+        length = len(frame[0])+loop if type(loop) == int else len(frame[0])+115
+
+        if type(loop) == int:
+            frame = list(map(_extend_frame, frame))
+        else:
+            frame = list(map(_pad_frame, frame))
+
+        _run_once=True
+        while loop or type(loop)==int or _run_once:
+            _run_once=False
+            for i in range(0, length, 2):
+                self.post_frame_raw("\n".join(l[i:i+115] for l in frame))
+                sleep(sleep_time)
 
     def post_frame(self, frame: List[List[bool]], center: bool = False) -> Response:
         data: List[List[str]] = [[" "] * self.width for _ in range(self.height)]

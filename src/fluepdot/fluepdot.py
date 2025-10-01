@@ -150,14 +150,12 @@ class Fluepdot:
             outStr = outStr + "".join(line) + "\n"
         return self._post(frameURL, post=outStr)
 
-
     def set_pixel(self, x: int = 0, y: int = 0) -> Response:
         y = self.height - 1 - y
         if self.flipped:
             x = self.width - 1 - x
             y = self.height - 1 - y
         return self._post(pixelURL, get={"x": x, "y": y})
-
 
     def unset_pixel(self, x: int = 0, y: int = 0) -> Response:
         y = self.height - 1 - y

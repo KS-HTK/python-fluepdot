@@ -1,6 +1,7 @@
 dots.py
 __pycache__
 venv
+.venv
 
 .idea
 src/python_fluepdot.egg-info

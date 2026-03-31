@@ -60,7 +60,7 @@ class Fluepdot:
     def get_size(self) -> tuple[int, int]:
         frame = self.get_frame()
         self.width = len(frame[0])
-        self.height = len(frame) - 1
+        self.height = len(frame)
         return self.width, self.height
 
     def get_frame(self) -> List[str]:

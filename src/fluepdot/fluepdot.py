@@ -175,11 +175,15 @@ class Fluepdot:
         return requests.delete(url=self.baseURL + endpoint, params=get)
 
     def _post(self, endpoint: str, get: GetParam | None = None, post: PostParam = '') -> Response:
+        get_str = "?"
         if get is None:
+            get_str = ""
             get = {}
+        for key, value in get.items():
+            get_str += f"{key}={value}&"
         if self.baseURL is None:
             raise RuntimeError('baseURL is None, call set_url')
-        return requests.post(url=self.baseURL + endpoint, params=get, data=post)
+        return requests.post(url=self.baseURL + endpoint + get_str[:-1], data=post)
 
     def _put(self, endpoint: str, get: GetParam | None = None, post: PostParam = '') -> Response:
         if get is None:
